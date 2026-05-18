@@ -605,7 +605,21 @@
             flex-shrink: 0;
             transition: transform .15s, box-shadow .15s;
             box-shadow: 0 0 18px rgba(79, 195, 247, .35);
-            font-variant-emoji: text;
+        }
+
+        .play-btn.paused {
+            font-size: 0;
+        }
+
+        .play-btn.paused::before,
+        .play-btn.paused::after {
+            content: '';
+            display: inline-block;
+            width: 2px;
+            height: 9px;
+            background: #071422;
+            border-radius: 1px;
+            margin: 0 1px;
         }
 
         .play-btn:hover {

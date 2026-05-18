@@ -91,14 +91,18 @@ function play() {
     if (playing || ALL_COORDS.length === 0) return;
     if (frame >= ALL_COORDS.length - 1) frame = 0;
     playing = true;
-    document.getElementById('play-btn').textContent = '⏸';
+    const btn = document.getElementById('play-btn');
+    btn.textContent = '';
+    btn.classList.add('paused');
     animId = requestAnimationFrame(tick);
 }
 
 function pause() {
     playing = false;
     cancelAnimationFrame(animId);
-    document.getElementById('play-btn').textContent = '▶';
+    const btn = document.getElementById('play-btn');
+    btn.textContent = '▶';
+    btn.classList.remove('paused');
 }
 
 function togglePlay() {
