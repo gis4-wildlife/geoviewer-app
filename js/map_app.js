@@ -91,7 +91,7 @@ function play() {
     if (playing || ALL_COORDS.length === 0) return;
     if (frame >= ALL_COORDS.length - 1) frame = 0;
     playing = true;
-    document.getElementById('play-btn').textContent = '⏸';
+    document.getElementById('play-btn').textContent = '⏸︎';
     animId = requestAnimationFrame(tick);
 }
 
