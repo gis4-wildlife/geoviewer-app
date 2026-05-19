@@ -159,26 +159,6 @@ map.on('load', async () => {
         }
     );
 
-    // Ghost — full route shown faintly
-    map.addSource('ghost', {
-        type: 'geojson',
-        data: geojson
-    });
-    map.addLayer({
-        id: 'ghost-line',
-        type: 'line',
-        source: 'ghost',
-        paint: {
-            'line-color': '#ffffff',
-            'line-width': 1.2,
-            'line-opacity': 0.12
-        },
-        layout: {
-            'line-cap': 'round',
-            'line-join': 'round'
-        },
-    });
-
     // Animated trail — needs at least 2 points for a valid LineString
     map.addSource('track', {
         type: 'geojson',

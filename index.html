@@ -794,6 +794,18 @@
             .play-val { font-size: 11px }
             .logo-title { font-size: 17px }
             .logo-area > div { flex: 1; text-align: center }
+
+            /* modal on mobile */
+            .dl-overlay { padding: 12px }
+            .dl-modal { padding: 20px 16px 18px; border-radius: 10px }
+            .dl-title { font-size: 15px }
+            .dl-sub { font-size: 10px; margin-bottom: 14px }
+            .dl-form .fr { margin-bottom: 9px }
+            .fi { font-size: 11px; padding: 7px 8px }
+.dl-submit { font-size: 11.5px; padding: 9px }
+            .dl-confirm-img { height: 110px }
+            .dl-confirm-title { font-size: 14px }
+            .dl-confirm-msg { font-size: 10.5px }
         }
 
         .sidebar-close { display: none }
@@ -819,6 +831,130 @@
         .maplibregl-ctrl-group button+button {
             border-top: 1px solid var(--border) !important
         }
+
+        /* ── DOWNLOAD MODAL ── */
+        .dl-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            align-items: flex-start;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            overflow-y: auto;
+            padding: 24px 16px;
+        }
+        .dl-overlay.open { display: flex }
+
+        .dl-modal {
+            background: var(--sb);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px 28px 24px;
+            width: min(420px, 100%);
+            position: relative;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+            margin: auto;
+        }
+
+        .dl-close {
+            position: absolute;
+            top: 12px; right: 14px;
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 16px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 2px 4px;
+            transition: color .15s;
+        }
+        .dl-close:hover { color: var(--text) }
+
+        .dl-title {
+            font-family: 'OVO', serif;
+            font-size: 17px;
+            margin-bottom: 4px;
+        }
+        .dl-sub {
+            font-size: 10.5px;
+            color: var(--muted);
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+
+        .dl-form .fr { margin-bottom: 11px }
+
+        .dl-submit {
+            width: 100%;
+            padding: 9px;
+            border: none;
+            border-radius: 6px;
+            background: var(--accent);
+            color: #071422;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            letter-spacing: .04em;
+            transition: opacity .15s;
+            margin-top: 4px;
+        }
+        .dl-submit:hover { opacity: .88 }
+        .dl-submit:disabled { opacity: .5; cursor: default }
+
+        /* confirmation / donation screen */
+        .dl-confirm { display: none; text-align: center }
+        .dl-confirm.show { display: block }
+        .dl-form.hide { display: none }
+
+        .dl-confirm-img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 14px;
+        }
+        .dl-confirm-title {
+            font-family: 'OVO', serif;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        .dl-confirm-msg {
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .dl-donate-btn {
+            display: inline-block;
+            padding: 9px 22px;
+            border-radius: 6px;
+            background: #0070ba;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: inherit;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: opacity .15s;
+            letter-spacing: .03em;
+        }
+        .dl-donate-btn:hover { opacity: .88 }
+        .dl-skip {
+            display: block;
+            margin-top: 10px;
+            font-size: 10.5px;
+            color: var(--muted);
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: inherit;
+            text-decoration: underline;
+        }
+        .dl-skip:hover { color: var(--text) }
 
         /* shark marker */
         .shark-marker {
@@ -888,7 +1024,7 @@
                                 </div>
                             </div>
                         </div>
-                        <a class="btn-connect" href="data/sky-galapagos-whaleshark.geojson" download="sky-galapagos-whaleshark.geojson" style="display:block;text-align:center;text-decoration:none">Download</a>
+                        <button class="btn-connect" onclick="openDownloadModal()">Download</button>
                         <div class="status-row">
                             <span class="dot live" id="sdot"></span>
                             <span id="stxt">Sky · Rhincodon typus · Aug 2021–Feb 2022</span>
@@ -948,8 +1084,109 @@
         </div>
     </div>
 
+    <!-- ═══ DOWNLOAD MODAL ═══ -->
+    <div class="dl-overlay" id="dl-overlay" onclick="onOverlayClick(event)">
+        <div class="dl-modal">
+            <button class="dl-close" onclick="closeDownloadModal()">✕</button>
+
+            <!-- Form state -->
+            <div class="dl-form" id="dl-form">
+                <div class="dl-title">Download Dataset</div>
+                <div class="dl-sub">Please share a few details before downloading. This helps us understand how the data is being used. After downloading, you'll have the option to support wildlife monitoring activities, every contribution counts.</div>
+
+                <div class="fr"><label class="fl">Full Name</label>
+                    <input class="fi" id="dl-name" type="text" placeholder="Jane Smith" oninput="checkForm()" required>
+                </div>
+                <div class="fr"><label class="fl">Institution / Organization</label>
+                    <input class="fi" id="dl-inst" type="text" placeholder="University or Research Lab" oninput="checkForm()" required>
+                </div>
+                <div class="fr"><label class="fl">Work/Personal Email</label>
+                    <input class="fi" id="dl-email" type="email" placeholder="jane@institution.edu" oninput="checkForm()" required>
+                </div>
+                <div class="fr"><label class="fl">Purpose of Download</label>
+                    <textarea class="fi" id="dl-purpose" rows="3" placeholder="e.g. Research on whale shark migration patterns..." style="resize:vertical" oninput="checkForm()" required></textarea>
+                </div>
+
+                <button class="dl-submit" id="dl-submit-btn" onclick="submitDownloadForm()" disabled>Submit &amp; Download</button>
+            </div>
+
+            <!-- Confirmation / donation state -->
+            <div class="dl-confirm" id="dl-confirm">
+                <img class="dl-confirm-img" src="img/arturo-rivera-0ANjak7w4IQ-unsplash-cut.jpg" alt="Whale shark in the Galápagos">
+                <div class="dl-confirm-title">Your download is starting</div>
+                <div class="dl-confirm-msg">
+                    This dataset was collected in the field by the <strong>Galápagos Whale Shark Project</strong>, during research expeditions in the Galápagos Marine Reserve.<br>
+                    If it's useful to your work, consider making a donation and contribute to software development and cloud infrastructure for wildlife monitoring.
+                </div>
+                <div style="background:#e8eaed;border-radius:10px;padding:12px 10px;margin-bottom:4px">
+                    <script async src="https://js.stripe.com/v3/buy-button.js"></script>
+                    <stripe-buy-button
+                        buy-button-id="buy_btn_1TYmLtGQ3bksst2TtfUp4ATS"
+                        publishable-key="pk_live_51PYDWmGQ3bksst2T3hbmTbvCyAPFXo55tyS88FHkNDE0vJTd1oAglCjT7KZuzHDfZYuSOmipOGulgikhEfXBdLGX00DRl30TUL"
+                    ></stripe-buy-button>
+                </div>
+                <button class="dl-skip" onclick="closeDownloadModal()">No thanks, close</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js" crossorigin=""></script>
     <script src="js/map_app.js"></script>
+    <script>
+        const FORMSPREE = 'https://formspree.io/f/xlgvrjrp';
+
+        function checkForm() {
+            const filled = ['dl-name','dl-inst','dl-email','dl-purpose']
+                .every(id => document.getElementById(id).value.trim() !== '');
+            document.getElementById('dl-submit-btn').disabled = !filled;
+        }
+
+        function openDownloadModal() {
+            document.getElementById('dl-overlay').classList.add('open');
+            document.getElementById('dl-form').classList.remove('hide');
+            document.getElementById('dl-confirm').classList.remove('show');
+            document.getElementById('dl-submit-btn').disabled = true;
+            document.getElementById('dl-submit-btn').textContent = 'Submit & Download';
+            ['dl-name','dl-inst','dl-email','dl-purpose'].forEach(id => document.getElementById(id).value = '');
+        }
+
+        function closeDownloadModal() {
+            document.getElementById('dl-overlay').classList.remove('open');
+        }
+
+        function onOverlayClick(e) {
+            if (e.target === document.getElementById('dl-overlay')) closeDownloadModal();
+        }
+
+        async function submitDownloadForm() {
+            const name    = document.getElementById('dl-name').value.trim();
+            const inst    = document.getElementById('dl-inst').value.trim();
+            const email   = document.getElementById('dl-email').value.trim();
+            const purpose = document.getElementById('dl-purpose').value.trim();
+
+            const btn = document.getElementById('dl-submit-btn');
+            btn.disabled = true;
+            btn.textContent = 'Sending…';
+
+            try {
+                await fetch(FORMSPREE, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ name, institution: inst, email, purpose })
+                });
+            } catch (_) { /* fail silently — still let them download */ }
+
+            // trigger download
+            const a = document.createElement('a');
+            a.href = 'data/sky-galapagos-whaleshark.geojson';
+            a.download = 'sky-galapagos-whaleshark.geojson';
+            a.click();
+
+            // show donation screen
+document.getElementById('dl-form').classList.add('hide');
+            document.getElementById('dl-confirm').classList.add('show');
+        }
+    </script>
 </body>
 
 </html>
