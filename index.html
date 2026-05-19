@@ -1024,7 +1024,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button class="btn-connect" onclick="openDownloadModal()">Request Dataset</button>
+                        <button class="btn-connect" id="request-dataset-btn" onclick="openDownloadModal()">Request Dataset</button>
                         <div class="status-row">
                             <span class="dot live" id="sdot"></span>
                             <span id="stxt">Sky · Rhincodon typus · Aug 2021–Feb 2022</span>
@@ -1177,6 +1177,11 @@
             } catch (_) { /* fail silently */ }
 
             closeDownloadModal();
+            const reqBtn = document.getElementById('request-dataset-btn');
+            if (reqBtn) {
+                reqBtn.textContent = 'Submitted';
+                reqBtn.disabled = true;
+            }
         }
     </script>
 </body>
