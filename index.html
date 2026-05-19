@@ -1024,7 +1024,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button class="btn-connect" onclick="openDownloadModal()">Download</button>
+                        <button class="btn-connect" onclick="openDownloadModal()">Request Dataset</button>
                         <div class="status-row">
                             <span class="dot live" id="sdot"></span>
                             <span id="stxt">Sky · Rhincodon typus · Aug 2021–Feb 2022</span>
@@ -1046,7 +1046,7 @@
             <div class="theme-bl">
                 <div class="theme-lbl">How to cite</div>
                 <p style="font-size:10px;color:var(--muted);line-height:1.6">
-                    Green, S., Vallejo, B. (2026). Data collection with satellite tags in Galapagos Marine Reserve - Sky the whale shark (Version v1) Dataset.
+                    Green, S., Vallejo, B. (2026). Biologging data collection of Rhincodon typus with satellite tags in the Galapagos Marine Reserve by the Galapagos Whale Shark Project  - Sky the whale shark (Version v1) Dataset.
                     <span style="color:var(--accent)">DOI: 10.5281/zenodo.20027852</span>
                 </p>
             </div>
@@ -1091,8 +1091,8 @@
 
             <!-- Form state -->
             <div class="dl-form" id="dl-form">
-                <div class="dl-title">Download Dataset</div>
-                <div class="dl-sub">Please share a few details before downloading. This helps us understand how the data is being used. After downloading, you'll have the option to support wildlife monitoring activities, every contribution counts.</div>
+                <div class="dl-title">Request Form</div>
+                <div class="dl-sub">Please share a few details before we send you the biologging dataset. This helps us understand how the data is being used. Submit a request and we will get back to you.</div>
 
                 <div class="fr"><label class="fl">Full Name</label>
                     <input class="fi" id="dl-name" type="text" placeholder="Jane Smith" oninput="checkForm()" required>
@@ -1107,7 +1107,7 @@
                     <textarea class="fi" id="dl-purpose" rows="3" placeholder="e.g. Research on whale shark migration patterns..." style="resize:vertical" oninput="checkForm()" required></textarea>
                 </div>
 
-                <button class="dl-submit" id="dl-submit-btn" onclick="submitDownloadForm()" disabled>Submit &amp; Download</button>
+                <button class="dl-submit" id="dl-submit-btn" onclick="submitDownloadForm()" disabled>Submit Request</button>
             </div>
 
             <!-- Confirmation / donation state -->
@@ -1146,7 +1146,7 @@
             document.getElementById('dl-form').classList.remove('hide');
             document.getElementById('dl-confirm').classList.remove('show');
             document.getElementById('dl-submit-btn').disabled = true;
-            document.getElementById('dl-submit-btn').textContent = 'Submit & Download';
+            document.getElementById('dl-submit-btn').textContent = 'Submit Request';
             ['dl-name','dl-inst','dl-email','dl-purpose'].forEach(id => document.getElementById(id).value = '');
         }
 
@@ -1174,17 +1174,9 @@
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                     body: JSON.stringify({ name, institution: inst, email, purpose })
                 });
-            } catch (_) { /* fail silently — still let them download */ }
+            } catch (_) { /* fail silently */ }
 
-            // trigger download
-            const a = document.createElement('a');
-            a.href = 'data/sky-galapagos-whaleshark.geojson';
-            a.download = 'sky-galapagos-whaleshark.geojson';
-            a.click();
-
-            // show donation screen
-document.getElementById('dl-form').classList.add('hide');
-            document.getElementById('dl-confirm').classList.add('show');
+            closeDownloadModal();
         }
     </script>
 </body>
